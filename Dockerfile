@@ -3,6 +3,7 @@ FROM amazonlinux:2
 # Set up working directories
 RUN mkdir -p /opt/app
 RUN mkdir -p /opt/app/build
+RUN mkdir -p /opt/app/build/python
 RUN mkdir -p /opt/app/bin/
 
 # Copy in the lambda source
@@ -40,10 +41,11 @@ RUN echo "DatabaseMirror database.clamav.net" > /opt/app/bin/freshclam.conf
 RUN echo "CompressLocalDatabase yes" >> /opt/app/bin/freshclam.conf
 
 # Create the zip file
-WORKDIR /opt/app
-RUN zip -r9 --exclude="*test*" /opt/app/build/lambda.zip *.py bin
-
 WORKDIR /usr/local/lib/python3.7/site-packages
-RUN zip -r9 /opt/app/build/lambda.zip *
+RUN cp -r * /opt/app/python
+
+WORKDIR /opt/app
+RUN zip -r9 --exclude="*test*" /opt/app/build/lambdafunction.zip *.py
+RUN zip -r9 --exclude="*test*" /opt/app/build/lambdalayer.zip python bin
 
 WORKDIR /opt/app
