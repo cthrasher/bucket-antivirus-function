@@ -3,8 +3,8 @@ FROM amazonlinux:2
 # Set up working directories
 RUN mkdir -p /opt/app
 RUN mkdir -p /opt/app/build
-RUN mkdir -p /opt/app/build/python
-RUN mkdir -p /opt/app/bin/
+RUN mkdir -p /opt/app/python
+RUN mkdir -p /opt/app/bin
 
 # Copy in the lambda source
 WORKDIR /opt/app
