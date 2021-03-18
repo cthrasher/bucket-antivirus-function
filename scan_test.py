@@ -27,6 +27,7 @@ from common import AV_SIGNATURE_OK
 from common import AV_STATUS_METADATA
 from common import AV_TIMESTAMP_METADATA
 from common import get_timestamp
+from scan import copy_clean_to_bucket
 from scan import delete_s3_object
 from scan import event_object
 from scan import get_local_path
@@ -319,6 +320,36 @@ class TestScan(unittest.TestCase):
 
         with s3_stubber_resource:
             set_av_metadata(s3_obj, scan_result, scan_signature, timestamp)
+
+    def test_copy_clean_to_bucket(self):
+        """
+        This test does not use stubber as s3_client.copy() is not supported.
+        See
+         - copy function in boto3/s3/inject.py which invokes a managed async transfer ...
+         - https://github.com/boto/botocore/issues/974 which describes a similar issue for `upload_file`
+        """
+        # args to be passed as s3_client, s3_object, scan_result, destination_bucket :
+        s3_obj = self.s3.Object(self.s3_bucket_name, self.s3_key_name)
+        scan_result = "CLEAN"
+        destination_bucket = "destination_bucket"
+        from unittest import mock
+
+        mock_s3_client = mock.MagicMock()
+        with mock_s3_client:
+            copy_clean_to_bucket(
+                mock_s3_client, s3_obj, scan_result, destination_bucket
+            )
+            self.assertEquals(
+                mock_s3_client.mock_calls,
+                [
+                    mock.call.__enter__(),
+                    mock.call.copy(
+                        {"Bucket": "test_bucket", "Key": "test_key"},
+                        "destination_bucket",
+                        "test_key",
+                    ),
+                ],
+            )
 
     def test_set_av_tags(self):
         scan_result = "CLEAN"

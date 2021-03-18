@@ -4,14 +4,14 @@ repos:
     rev: stable
     hooks:
       - id: black
-        language_version: python3.7
+        language_version: python3.9
         exclude: >
           (?x)^(
             scripts/gen-docs-index|
           )$
 
   - repo: git://github.com/pre-commit/pre-commit-hooks
-    rev: v2.2.3
+    rev: v3.4.0
     hooks:
       - id: check-ast
       - id: check-json
@@ -24,7 +24,12 @@ repos:
       - id: trailing-whitespace
 
   - repo: git://github.com/igorshubovych/markdownlint-cli
-    rev: v0.17.0
+    rev: v0.26.0
     hooks:
       - id: markdownlint
         entry: markdownlint --ignore .github/*.md
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+      - id: flake8

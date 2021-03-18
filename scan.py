@@ -150,6 +150,19 @@ def set_av_tags(s3_client, s3_object, scan_result, scan_signature, timestamp):
     )
 
 
+def copy_clean_to_bucket(s3_client, s3_object, scan_result, destination_bucket):
+    if scan_result == AV_STATUS_CLEAN:
+        print(
+            f"Copying clean object {s3_object.key} from {s3_object.bucket_name} to {destination_bucket}"
+        )
+        copy_source = {"Bucket": s3_object.bucket_name, "Key": s3_object.key}
+        s3_client.copy(copy_source, destination_bucket, s3_object.key)
+    else:
+        print(
+            f"Not copying infected object {s3_object.key} from {s3_object.bucket_name}"
+        )
+
+
 def sns_start_scan(sns_client, s3_object, scan_start_sns_arn, timestamp):
     message = {
         "bucket": s3_object.bucket_name,
@@ -244,6 +257,10 @@ def lambda_handler(event, context):
     if "AV_UPDATE_METADATA" in os.environ:
         set_av_metadata(s3_object, scan_result, scan_signature, result_time)
     set_av_tags(s3_client, s3_object, scan_result, scan_signature, result_time)
+    if "AV_COPY_CLEAN_BUCKET" in os.environ:
+        copy_clean_to_bucket(
+            s3_client, s3_object, scan_result, os.environ["AV_COPY_CLEAN_BUCKET"]
+        )
 
     # Publish the scan results
     if AV_STATUS_SNS_ARN not in [None, ""]:

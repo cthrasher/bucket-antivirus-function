@@ -256,6 +256,7 @@ the table below for reference.
 
 | Variable | Description | Default | Required |
 | --- | --- | --- | --- |
+| AV_COPY_CLEAN_BUCKET | Name of bucket (in same account) to copy clean items to | | No |
 | AV_DEFINITION_S3_BUCKET | Bucket containing antivirus definition files |  | Yes |
 | AV_DEFINITION_S3_PREFIX | Prefix for antivirus definition files | clamav_defs | No |
 | AV_DEFINITION_PATH | Path containing files at runtime | /tmp/clamav_defs | No |

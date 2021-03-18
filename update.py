@@ -27,7 +27,7 @@ import shutil
 
 
 def lambda_handler(event, context):
-    s3 = boto3.resource("s3")
+    # s3 = boto3.resource("s3")
     s3_client = boto3.client("s3")
 
     print("Script starting at %s\n" % (get_timestamp()))
